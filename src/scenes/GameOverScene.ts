@@ -48,12 +48,13 @@ export class GameOverScene extends Scene {
     context.fillStyle = '#000';
     context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    // Game Over text
-    context.fillStyle = '#B22222';
-    context.font = 'bold 20px monospace';
+    // "Te ha dao un amarillo" text
+    context.fillStyle = '#FFD700';
+    context.font = 'bold 12px monospace';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText('GAME OVER', SCREEN_WIDTH / 2, 80);
+    context.fillText('TE HA DAO', SCREEN_WIDTH / 2, 70);
+    context.fillText('UN AMARILLO', SCREEN_WIDTH / 2, 88);
 
     // Final score
     context.fillStyle = '#fff';
@@ -75,38 +76,58 @@ export class GameOverScene extends Scene {
     }
   }
 
-  private drawSadSmoky(context: CanvasRenderingContext2D, x: number, y: number): void {
-    context.save();
-    context.translate(x, y);
+  private drawSadSmoky(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+    ctx.save();
+    ctx.translate(x, y);
 
-    // Body (grayed out)
-    context.fillStyle = '#1a3a17';
-    context.fillRect(0, 0, 20, 24);
+    const w = 16;
 
-    // X eyes (dead)
-    context.strokeStyle = '#fff';
-    context.lineWidth = 2;
+    // Hair (brown/dark)
+    ctx.fillStyle = '#4a3728';
+    ctx.fillRect(3, 0, w - 6, 3);
+    ctx.fillRect(2, 1, 2, 2);
+    ctx.fillRect(w - 4, 1, 2, 2);
 
+    // Face/skin
+    ctx.fillStyle = '#e8b88a';
+    ctx.fillRect(3, 3, w - 6, 6);
+
+    // X eyes (KO)
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
     // Left X
-    context.beginPath();
-    context.moveTo(4, 6);
-    context.lineTo(8, 10);
-    context.moveTo(8, 6);
-    context.lineTo(4, 10);
-    context.stroke();
-
+    ctx.beginPath();
+    ctx.moveTo(4, 4);
+    ctx.lineTo(7, 6);
+    ctx.moveTo(7, 4);
+    ctx.lineTo(4, 6);
+    ctx.stroke();
     // Right X
-    context.beginPath();
-    context.moveTo(12, 6);
-    context.lineTo(16, 10);
-    context.moveTo(16, 6);
-    context.lineTo(12, 10);
-    context.stroke();
+    ctx.beginPath();
+    ctx.moveTo(9, 4);
+    ctx.lineTo(12, 6);
+    ctx.moveTo(12, 4);
+    ctx.lineTo(9, 6);
+    ctx.stroke();
 
     // Frown
-    context.fillStyle = '#fff';
-    context.fillRect(6, 18, 8, 2);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(6, 7, 4, 1);
 
-    context.restore();
+    // Green hoodie body
+    ctx.fillStyle = COLORS.SMOKY_GREEN;
+    ctx.fillRect(2, 9, w - 4, 4);
+
+    // Darker hoodie details
+    ctx.fillStyle = '#1a5c14';
+    ctx.fillRect(7, 9, 2, 4);
+
+    // Jeans
+    ctx.fillStyle = '#4a6fa5';
+    ctx.fillRect(3, 13, w - 6, 3);
+    ctx.fillStyle = '#3a5a8a';
+    ctx.fillRect(7, 13, 1, 3);
+
+    ctx.restore();
   }
 }

@@ -6,6 +6,7 @@ import { createKoopa } from '../entities/Koopa';
 import { createKaren } from '../entities/Karen';
 import { createPiranhaPlant } from '../entities/PiranhaPlant';
 import { createFlagPole } from '../entities/FlagPole';
+import { PipeWarp } from '../traits/PipeWarp';
 import { SpriteSheet } from '../graphics/SpriteSheet';
 import type { LevelData, EntitySpawn } from '../types';
 
@@ -388,6 +389,415 @@ export function createTestLevel(): Level {
   // Position after final staircase (tile 198)
   // ============================================
   const flagPole = createFlagPole(198 * 16, 12 * 16);
+  level.addEntity(flagPole);
+
+  return level;
+}
+
+// Create Level 1-2 with pipe warp mechanic
+export function createLevel2(): Level {
+  const LEVEL_WIDTH = 310;  // 260 main + 50 underground bonus area
+  const tiles: number[][] = [];
+
+  // Initialize with air (15 rows, LEVEL_WIDTH columns)
+  for (let y = 0; y < 15; y++) {
+    tiles.push(new Array(LEVEL_WIDTH).fill(0));
+  }
+
+  // Helper to set ground tiles (rows 13-14)
+  const setGround = (startX: number, endX: number) => {
+    for (let x = startX; x <= endX; x++) {
+      tiles[13][x] = 1;
+      tiles[14][x] = 1;
+    }
+  };
+
+  // Helper to place a pipe (2 tiles wide, variable height)
+  const placePipe = (tileX: number, height: number) => {
+    const topRow = 13 - height;
+    tiles[topRow][tileX] = 4;     // PIPE_TOP_LEFT
+    tiles[topRow][tileX + 1] = 5; // PIPE_TOP_RIGHT
+    for (let h = 1; h < height; h++) {
+      tiles[topRow + h][tileX] = 6;     // PIPE_LEFT
+      tiles[topRow + h][tileX + 1] = 7; // PIPE_RIGHT
+    }
+  };
+
+  // ============================================
+  // MAIN LEVEL GROUND (with pits)
+  // ============================================
+  setGround(0, 70);
+  setGround(74, 110);
+  setGround(115, 165);
+  setGround(169, 220);
+
+  // ============================================
+  // SECTION 1: Start area (tiles 0-15) - flat, Buzzkills
+  // ============================================
+
+  // ============================================
+  // SECTION 2: Floating platforms and gaps (tiles 16-30)
+  // ============================================
+  tiles[9][18] = 3;  // ? coin
+  tiles[9][22] = 3;  // ? green paper
+
+  // Floating brick platform
+  for (let x = 25; x <= 29; x++) {
+    tiles[7][x] = 2;
+  }
+  tiles[7][27] = 3;  // ? in the middle
+
+  // ============================================
+  // SECTION 3: Warp pipe entrance (tile 31) - 3 tiles tall
+  // ============================================
+  placePipe(31, 3);
+
+  // ============================================
+  // SECTION 4: Pipe section (tiles 35-55)
+  // ============================================
+  placePipe(36, 2);
+  placePipe(42, 3);  // piranha
+  placePipe(48, 4);  // piranha
+  placePipe(54, 3);
+
+  tiles[9][39] = 3;
+  tiles[9][45] = 3;  // green paper
+  tiles[9][51] = 3;
+
+  // ============================================
+  // SECTION 5: Vertical platforming (tiles 56-70)
+  // ============================================
+  tiles[9][58] = 3;
+  tiles[5][60] = 3;  // brown paper (high up)
+  tiles[9][62] = 2;
+  tiles[9][63] = 3;
+  tiles[9][64] = 2;
+
+  for (let x = 66; x <= 70; x++) {
+    tiles[5][x] = 2;
+  }
+  tiles[5][68] = 3;  // gold paper
+
+  // ============================================
+  // SECTION 6: Narrow bridges (tiles 74-95)
+  // ============================================
+  for (let x = 76; x <= 79; x++) {
+    tiles[9][x] = 2;
+  }
+  for (let x = 82; x <= 86; x++) {
+    tiles[9][x] = 2;
+  }
+  tiles[9][84] = 3;
+
+  tiles[9][90] = 3;  // green paper
+  tiles[9][93] = 3;
+
+  // ============================================
+  // SECTION 7: Brick ceiling passage (tiles 96-115)
+  // ============================================
+  for (let x = 96; x <= 110; x++) {
+    tiles[5][x] = 2;
+  }
+  tiles[5][100] = 3;
+  tiles[5][105] = 3;  // brown paper
+
+  tiles[9][98] = 3;
+  tiles[9][102] = 2;
+  tiles[9][103] = 3;  // gold paper
+  tiles[9][104] = 2;
+  tiles[9][108] = 3;
+
+  // ============================================
+  // SECTION 8: Post-pit recovery (tiles 115-135)
+  // ============================================
+  tiles[9][117] = 3;  // green paper
+  tiles[9][120] = 2;
+  tiles[9][121] = 2;
+  tiles[9][122] = 3;
+  tiles[9][123] = 2;
+
+  // Small step pyramids
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j <= i; j++) {
+      tiles[12 - j][126 + i] = 1;
+    }
+  }
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j <= 2 - i; j++) {
+      tiles[12 - j][130 + i] = 1;
+    }
+  }
+
+  // ============================================
+  // SECTION 9: Pipe exit from underground (tile 136)
+  // ============================================
+  placePipe(136, 3);
+
+  // ============================================
+  // SECTION 10: Dense enemy section (tiles 138-165)
+  // ============================================
+  tiles[9][140] = 3;
+  tiles[9][144] = 2;
+  tiles[9][145] = 3;  // green paper
+  tiles[9][146] = 2;
+
+  for (let x = 150; x <= 155; x++) {
+    tiles[5][x] = 2;
+  }
+  tiles[5][152] = 3;
+  tiles[5][154] = 3;
+
+  tiles[9][158] = 3;
+  tiles[9][160] = 2;
+  tiles[9][161] = 3;  // brown paper
+  tiles[9][162] = 2;
+
+  // ============================================
+  // SECTION 11: Stairs and pre-flagpole (tiles 169-216)
+  // ============================================
+  tiles[9][172] = 3;
+  tiles[9][175] = 2;
+  tiles[9][176] = 3;
+  tiles[9][177] = 2;
+
+  // Staircase up
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j <= i; j++) {
+      tiles[12 - j][180 + i] = 1;
+    }
+  }
+  // Staircase down
+  for (let i = 0; i < 4; i++) {
+    for (let j = 0; j <= 3 - i; j++) {
+      tiles[12 - j][186 + i] = 1;
+    }
+  }
+
+  tiles[9][192] = 3;
+  tiles[9][195] = 9;  // invisible block with green paper
+
+  // Final pipe
+  placePipe(199, 3);
+
+  // Final staircase to flagpole (8 steps)
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j <= i; j++) {
+      tiles[12 - j][204 + i] = 1;
+    }
+  }
+
+  // Ground after staircase
+  for (let x = 214; x <= 220; x++) {
+    tiles[12][x] = 1;
+  }
+
+  // ============================================
+  // UNDERGROUND BONUS ZONE (tiles 265-305)
+  // ============================================
+  // Ceiling (rows 2-3)
+  for (let x = 265; x <= 305; x++) {
+    tiles[2][x] = 2;
+    tiles[3][x] = 2;
+  }
+  // Floor (rows 13-14)
+  for (let x = 265; x <= 305; x++) {
+    tiles[13][x] = 1;
+    tiles[14][x] = 1;
+  }
+  // Walls on sides
+  for (let y = 2; y <= 14; y++) {
+    tiles[y][265] = 1;
+    tiles[y][305] = 1;
+  }
+
+  // Rows of ? blocks (coins)
+  for (let x = 270; x <= 290; x += 2) {
+    tiles[7][x] = 3;
+  }
+  for (let x = 271; x <= 291; x += 2) {
+    tiles[10][x] = 3;
+  }
+
+  // Exit pipe
+  placePipe(295, 3);
+
+  // ============================================
+  // Create level and set block contents
+  // ============================================
+  const level = new Level('1-2', tiles);
+
+  level.undergroundRange = { startTile: 260, endTile: 310 };
+  level.completionX = 220 * 16;
+
+  // Section 2
+  level.setBlockContent(18, 9, 'coin');
+  level.setBlockContent(22, 9, 'green');
+  level.setBlockContent(27, 7, 'coin');
+
+  // Section 4
+  level.setBlockContent(39, 9, 'coin');
+  level.setBlockContent(45, 9, 'green');
+  level.setBlockContent(51, 9, 'coin');
+
+  // Section 5
+  level.setBlockContent(58, 9, 'coin');
+  level.setBlockContent(60, 5, 'brown');
+  level.setBlockContent(63, 9, 'coin');
+  level.setBlockContent(68, 5, 'gold');
+
+  // Section 6
+  level.setBlockContent(84, 9, 'coin');
+  level.setBlockContent(90, 9, 'green');
+  level.setBlockContent(93, 9, 'coin');
+
+  // Section 7
+  level.setBlockContent(100, 5, 'coin');
+  level.setBlockContent(105, 5, 'brown');
+  level.setBlockContent(98, 9, 'coin');
+  level.setBlockContent(103, 9, 'gold');
+  level.setBlockContent(108, 9, 'coin');
+
+  // Section 8
+  level.setBlockContent(117, 9, 'green');
+  level.setBlockContent(122, 9, 'coin');
+
+  // Section 10
+  level.setBlockContent(140, 9, 'coin');
+  level.setBlockContent(145, 9, 'green');
+  level.setBlockContent(152, 5, 'coin');
+  level.setBlockContent(154, 5, 'coin');
+  level.setBlockContent(158, 9, 'coin');
+  level.setBlockContent(161, 9, 'brown');
+
+  // Section 11
+  level.setBlockContent(172, 9, 'coin');
+  level.setBlockContent(176, 9, 'coin');
+  level.setBlockContent(192, 9, 'coin');
+  level.setBlockContent(195, 9, 'green');
+
+  // Underground bonus coins
+  for (let x = 270; x <= 290; x += 2) {
+    level.setBlockContent(x, 7, 'coin');
+  }
+  for (let x = 271; x <= 291; x += 2) {
+    level.setBlockContent(x, 10, 'coin');
+  }
+  level.setBlockContent(280, 7, 'green');
+  level.setBlockContent(285, 10, 'gold');
+
+  // ============================================
+  // Add player with PipeWarp trait
+  // ============================================
+  const smoky = createSmoky();
+  smoky.pos.x = 48;
+  smoky.pos.y = 192;
+
+  const pipeWarp = new PipeWarp();
+  pipeWarp.setWarpPoints([
+    {
+      entranceTileX: 31,
+      entranceTileY: 10,  // top of 3-tall pipe: 13 - 3 = 10
+      exitX: 272 * 16,
+      exitY: 11 * 16,
+      exitCameraX: 265 * 16,
+    },
+    {
+      entranceTileX: 295,
+      entranceTileY: 10,
+      exitX: 136 * 16 + 2,
+      exitY: 9 * 16,
+      exitCameraX: 130 * 16,
+    },
+  ]);
+  smoky.addTrait(pipeWarp);
+  level.addEntity(smoky);
+
+  // ============================================
+  // Enemies
+  // ============================================
+  const addBuzzkill = (tileX: number) => {
+    const b = createBuzzkill();
+    b.pos.x = tileX * 16;
+    b.pos.y = 192;
+    level.addEntity(b);
+  };
+
+  // Section 1
+  addBuzzkill(8);
+  addBuzzkill(12);
+  addBuzzkill(13);
+
+  // Section 4
+  addBuzzkill(38);
+  addBuzzkill(44);
+  addBuzzkill(50);
+  addBuzzkill(53);
+
+  // Section 5
+  addBuzzkill(59);
+  addBuzzkill(65);
+
+  // Section 6
+  addBuzzkill(88);
+  addBuzzkill(92);
+
+  // Section 7
+  addBuzzkill(99);
+  addBuzzkill(106);
+  addBuzzkill(107);
+
+  // Section 10
+  addBuzzkill(139);
+  addBuzzkill(141);
+  addBuzzkill(148);
+  addBuzzkill(155);
+  addBuzzkill(157);
+  addBuzzkill(163);
+  addBuzzkill(164);
+
+  // Section 11
+  addBuzzkill(174);
+  addBuzzkill(193);
+
+  // Koopas
+  const addKoopa = (tileX: number) => {
+    const k = createKoopa();
+    k.pos.x = tileX * 16;
+    k.pos.y = 184;
+    level.addEntity(k);
+  };
+
+  addKoopa(75);
+  addKoopa(95);
+  addKoopa(143);
+  addKoopa(196);
+
+  // Karens
+  const addKaren = (tileX: number) => {
+    const k = createKaren();
+    k.pos.x = tileX * 16;
+    k.pos.y = 192;
+    level.addEntity(k);
+  };
+
+  addKaren(35);
+  addKaren(85);
+  addKaren(130);
+  addKaren(160);
+  addKaren(200);
+
+  // Piranha Plants
+  const plant1 = createPiranhaPlant(42 * 16, 10 * 16);
+  level.addEntity(plant1);
+
+  const plant2 = createPiranhaPlant(48 * 16, 9 * 16);
+  level.addEntity(plant2);
+
+  const plant3 = createPiranhaPlant(199 * 16, 10 * 16);
+  level.addEntity(plant3);
+
+  // Flag pole
+  const flagPole = createFlagPole(214 * 16, 12 * 16);
   level.addEntity(flagPole);
 
   return level;

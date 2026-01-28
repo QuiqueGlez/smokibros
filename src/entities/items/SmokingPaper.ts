@@ -3,29 +3,33 @@ import type { Level } from '../../levels/Level';
 import type { PowerUp } from '../../traits/PowerUp';
 import type { ChillMeter } from '../../traits/ChillMeter';
 import { audioManager } from '../../audio/AudioManager';
+import { productImages } from '../../graphics/ProductImages';
 
 // Paper types matching Smoking Paper products
 export type PaperType = 'green' | 'gold' | 'brown';
 
-// Smoking Paper colors
+// Smoking Paper product colors
 const PAPER_COLORS = {
   green: {
-    main: '#2D5A27',    // Smoking Green
-    light: '#7EC87E',
-    dark: '#1a3a17',
-    glow: '#00ff00'
+    main: '#d84a7a',    // Smoqueen Rose Quartz (pink)
+    light: '#f0a0b8',
+    dark: '#a03060',
+    glow: '#ff6090',
+    accent: '#fff'
   },
   gold: {
-    main: '#C9A227',    // Smoking Gold
-    light: '#FFD700',
-    dark: '#8B7500',
-    glow: '#ffff00'
+    main: '#2878c8',    // Smoqueen Sapphire (blue)
+    light: '#60b0f0',
+    dark: '#1850a0',
+    glow: '#40a0ff',
+    accent: '#c0e0ff'
   },
   brown: {
-    main: '#8B4513',    // Smoking Brown (unbleached)
+    main: '#8B4513',    // Supreme Brown
     light: '#CD853F',
     dark: '#5D2906',
-    glow: '#ff8800'
+    glow: '#ff8800',
+    accent: '#C41E3A'
   }
 };
 
@@ -67,43 +71,38 @@ export function createSmokingPaper(x: number, y: number, type: PaperType): Entit
       ctx.clip();
     }
 
-    // Glow effect for gold paper
-    if (type === 'gold') {
-      ctx.shadowColor = colors.glow;
-      ctx.shadowBlur = 4 + Math.sin(glowPulse) * 2;
+    // Try product image first
+    const img = productImages.get(`paper-${type}`);
+    if (img) {
+      ctx.drawImage(img, px, py, 16, 16);
+    } else {
+      // Fallback: procedural draw
+      if (type === 'gold') {
+        ctx.shadowColor = colors.glow;
+        ctx.shadowBlur = 4 + Math.sin(glowPulse) * 2;
+      }
+
+      ctx.fillStyle = colors.main;
+      ctx.fillRect(px + 1, py + 2, 14, 12);
+      ctx.fillStyle = colors.light;
+      ctx.fillRect(px + 3, py + 4, 10, 6);
+      ctx.fillStyle = colors.accent;
+      ctx.fillRect(px + 4, py + 5, 8, 4);
+      ctx.fillStyle = colors.dark;
+      ctx.fillRect(px + 5, py + 5, 4, 1);
+      ctx.fillRect(px + 5, py + 6, 2, 1);
+      ctx.fillRect(px + 5, py + 7, 4, 1);
+      ctx.fillRect(px + 7, py + 8, 2, 1);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 3, py, 10, 3);
+      ctx.fillStyle = colors.dark;
+      ctx.fillRect(px, py + 1, 1, 14);
+      ctx.fillRect(px + 15, py + 1, 1, 14);
+      ctx.fillRect(px, py + 14, 16, 1);
+      ctx.fillRect(px + 2, py + 1, 12, 1);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.fillRect(px + 2, py + 3, 2, 8);
     }
-
-    // Paper pack body
-    ctx.fillStyle = colors.main;
-    ctx.fillRect(px + 2, py + 2, 12, 12);
-
-    // Paper edges (white papers sticking out)
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(px + 3, py, 10, 3);
-    ctx.fillRect(px + 4, py - 1, 8, 2);
-
-    // Smoking logo area (simplified)
-    ctx.fillStyle = colors.light;
-    ctx.fillRect(px + 4, py + 5, 8, 4);
-
-    // "S" logo
-    ctx.fillStyle = colors.dark;
-    ctx.fillRect(px + 5, py + 5, 2, 1);
-    ctx.fillRect(px + 5, py + 6, 1, 1);
-    ctx.fillRect(px + 5, py + 7, 2, 1);
-    ctx.fillRect(px + 6, py + 8, 1, 1);
-    ctx.fillRect(px + 5, py + 8, 2, 1);
-
-    // Border
-    ctx.fillStyle = colors.dark;
-    ctx.fillRect(px + 1, py + 1, 14, 1);
-    ctx.fillRect(px + 1, py + 1, 1, 14);
-    ctx.fillRect(px + 1, py + 14, 14, 1);
-    ctx.fillRect(px + 14, py + 1, 1, 14);
-
-    // Shine
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.fillRect(px + 3, py + 3, 2, 6);
 
     ctx.restore();
   };

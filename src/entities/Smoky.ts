@@ -18,6 +18,32 @@ function darkenColor(hex: string): string {
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
+// Draw skateboard for small Smoky (replaces shoes area)
+function drawSkateboard(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  // Board deck (tail + nose extend beyond wheels)
+  ctx.fillStyle = '#c47632';
+  ctx.fillRect(-1, h - 3, w + 2, 1);
+  // Wheels (inset from edges for tail/nose)
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(2, h - 2, 3, 2);
+  ctx.fillRect(w - 5, h - 2, 3, 2);
+}
+
+// Draw skateboard for big Smoky (replaces bottom of shoes area)
+function drawSkateboardBig(ctx: CanvasRenderingContext2D, w: number, h: number): void {
+  // Feet on board
+  ctx.fillStyle = '#333';
+  ctx.fillRect(3, h - 5, 5, 2);
+  ctx.fillRect(w - 8, h - 5, 5, 2);
+  // Board deck (tail + nose extend beyond wheels)
+  ctx.fillStyle = '#c47632';
+  ctx.fillRect(-1, h - 3, w + 2, 1);
+  // Wheels (inset from edges for tail/nose)
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(2, h - 2, 3, 2);
+  ctx.fillRect(w - 5, h - 2, 3, 2);
+}
+
 export function createSmoky(_sprites?: SpriteSheet): Entity {
   const smoky = new Entity();
 
@@ -168,12 +194,6 @@ function drawStanding(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 7, 3, 1);
 
-  // Joint/cigarette in mouth
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 2, 6, 5, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 2, 6, 1, 2); // ember
-
   // Green hoodie body (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(2, 9, w - 4, 4);
@@ -186,13 +206,11 @@ function drawStanding(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillStyle = '#3d5c94';
   ctx.fillRect(3, 13, w - 6, 1);
 
-  // Shoes
-  ctx.fillStyle = '#333';
-  ctx.fillRect(2, h - 2, 5, 2);
-  ctx.fillRect(w - 7, h - 2, 5, 2);
+  // Skateboard
+  drawSkateboard(ctx, w, h);
 }
 
-// Walking pose 1 - guy with joint
+// Walking pose 1
 function drawWalk1(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -216,12 +234,6 @@ function drawWalk1(ctx: CanvasRenderingContext2D, w: number, h: number, starColo
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 7, 3, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 2, 6, 5, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 2, 6, 1, 2);
-
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(2, 9, w - 4, 4);
@@ -232,13 +244,11 @@ function drawWalk1(ctx: CanvasRenderingContext2D, w: number, h: number, starColo
   ctx.fillStyle = '#3d5c94';
   ctx.fillRect(3, 13, w - 6, 1);
 
-  // Shoes - walking
-  ctx.fillStyle = '#333';
-  ctx.fillRect(0, h - 2, 5, 2);
-  ctx.fillRect(w - 4, h - 3, 5, 2);
+  // Skateboard
+  drawSkateboard(ctx, w, h);
 }
 
-// Walking pose 2 - guy with joint
+// Walking pose 2
 function drawWalk2(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -262,12 +272,6 @@ function drawWalk2(ctx: CanvasRenderingContext2D, w: number, h: number, starColo
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 7, 3, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 2, 6, 5, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 2, 6, 1, 2);
-
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(2, 9, w - 4, 4);
@@ -278,13 +282,11 @@ function drawWalk2(ctx: CanvasRenderingContext2D, w: number, h: number, starColo
   ctx.fillStyle = '#3d5c94';
   ctx.fillRect(3, 13, w - 6, 1);
 
-  // Shoes - together
-  ctx.fillStyle = '#333';
-  ctx.fillRect(3, h - 2, 4, 2);
-  ctx.fillRect(w - 7, h - 2, 4, 2);
+  // Skateboard
+  drawSkateboard(ctx, w, h);
 }
 
-// Walking pose 3 - guy with joint
+// Walking pose 3
 function drawWalk3(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -308,12 +310,6 @@ function drawWalk3(ctx: CanvasRenderingContext2D, w: number, h: number, starColo
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 7, 3, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 2, 6, 5, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 2, 6, 1, 2);
-
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(2, 9, w - 4, 4);
@@ -324,13 +320,11 @@ function drawWalk3(ctx: CanvasRenderingContext2D, w: number, h: number, starColo
   ctx.fillStyle = '#3d5c94';
   ctx.fillRect(3, 13, w - 6, 1);
 
-  // Shoes - other forward
-  ctx.fillStyle = '#333';
-  ctx.fillRect(w - 4, h - 2, 5, 2);
-  ctx.fillRect(1, h - 3, 5, 2);
+  // Skateboard
+  drawSkateboard(ctx, w, h);
 }
 
-// Jumping pose - guy with joint
+// Jumping pose
 function drawJumping(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -354,12 +348,6 @@ function drawJumping(ctx: CanvasRenderingContext2D, w: number, h: number, starCo
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 7, 3, 2);
 
-  // Joint going up
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 1, 5, 4, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 2, 5, 1, 2);
-
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(2, 9, w - 4, 4);
@@ -380,13 +368,11 @@ function drawJumping(ctx: CanvasRenderingContext2D, w: number, h: number, starCo
   ctx.fillStyle = '#3d5c94';
   ctx.fillRect(3, 13, w - 6, 1);
 
-  // Shoes spread
-  ctx.fillStyle = '#333';
-  ctx.fillRect(1, h - 2, 4, 2);
-  ctx.fillRect(w - 5, h - 2, 4, 2);
+  // Skateboard
+  drawSkateboard(ctx, w, h);
 }
 
-// Skidding pose (turning around) - guy with joint
+// Skidding pose (turning around)
 function drawSkidding(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair - messy from skidding
   ctx.fillStyle = '#4a3728';
@@ -410,12 +396,6 @@ function drawSkidding(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillStyle = '#000';
   ctx.fillRect(7, 7, 2, 1);
 
-  // Joint almost falling
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 1, 7, 4, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 2, 7, 1, 2);
-
   // Green hoodie - leaning (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(3, 9, w - 5, 4);
@@ -431,10 +411,8 @@ function drawSkidding(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillRect(0, h - 4, 3, 2);
   ctx.fillRect(1, h - 6, 2, 2);
 
-  // Shoes - braking
-  ctx.fillStyle = '#333';
-  ctx.fillRect(4, h - 2, 5, 2);
-  ctx.fillRect(w - 5, h - 2, 4, 2);
+  // Skateboard
+  drawSkateboard(ctx, w, h);
 }
 
 // Big Smoky drawing function (when powered up)
@@ -482,7 +460,7 @@ function drawBigSmoky(
   context.restore();
 }
 
-// Big standing pose - guy with joint (powered up)
+// Big standing pose (powered up)
 function drawBigStanding(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -506,12 +484,6 @@ function drawBigStanding(ctx: CanvasRenderingContext2D, w: number, h: number, st
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 10, 4, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 1, 9, 6, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 4, 9, 1, 2);
-
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(2, 13, w - 4, 6);
@@ -522,13 +494,11 @@ function drawBigStanding(ctx: CanvasRenderingContext2D, w: number, h: number, st
   ctx.fillStyle = '#3d5c94';
   ctx.fillRect(3, 19, w - 6, 5);
 
-  // Shoes
-  ctx.fillStyle = '#333';
-  ctx.fillRect(2, h - 4, 6, 4);
-  ctx.fillRect(w - 8, h - 4, 6, 4);
+  // Skateboard
+  drawSkateboardBig(ctx, w, h);
 }
 
-// Big walking poses - guy with joint
+// Big walking poses
 function drawBigWalk1(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -548,11 +518,6 @@ function drawBigWalk1(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillRect(12, 7, 2, 2);
   ctx.fillRect(6, 10, 4, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 1, 9, 6, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 4, 9, 1, 2);
 
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
@@ -560,14 +525,12 @@ function drawBigWalk1(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillStyle = starColor ? darkenColor(starColor) : COLORS.SMOKY_DARK;
   ctx.fillRect(6, 13, 4, 5);
 
-  // Pants - walking
+  // Pants
   ctx.fillStyle = '#3d5c94';
-  ctx.fillRect(1, 19, 6, 5);
-  ctx.fillRect(w - 5, 20, 5, 4);
+  ctx.fillRect(3, 19, w - 6, 5);
 
-  ctx.fillStyle = '#333';
-  ctx.fillRect(0, h - 4, 6, 4);
-  ctx.fillRect(w - 4, h - 3, 5, 3);
+  // Skateboard
+  drawSkateboardBig(ctx, w, h);
 }
 
 function drawBigWalk2(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
@@ -589,11 +552,6 @@ function drawBigWalk2(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillRect(12, 7, 2, 2);
   ctx.fillRect(6, 10, 4, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 1, 9, 6, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 4, 9, 1, 2);
 
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
@@ -601,14 +559,12 @@ function drawBigWalk2(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillStyle = starColor ? darkenColor(starColor) : COLORS.SMOKY_DARK;
   ctx.fillRect(6, 13, 4, 5);
 
-  // Pants - together
+  // Pants
   ctx.fillStyle = '#3d5c94';
-  ctx.fillRect(4, 19, 4, 5);
-  ctx.fillRect(w - 8, 19, 4, 5);
+  ctx.fillRect(3, 19, w - 6, 5);
 
-  ctx.fillStyle = '#333';
-  ctx.fillRect(3, h - 4, 5, 4);
-  ctx.fillRect(w - 8, h - 4, 5, 4);
+  // Skateboard
+  drawSkateboardBig(ctx, w, h);
 }
 
 function drawBigWalk3(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
@@ -630,11 +586,6 @@ function drawBigWalk3(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillRect(12, 7, 2, 2);
   ctx.fillRect(6, 10, 4, 1);
 
-  // Joint
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w - 1, 9, 6, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 4, 9, 1, 2);
 
   // Green hoodie (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
@@ -642,17 +593,15 @@ function drawBigWalk3(ctx: CanvasRenderingContext2D, w: number, h: number, starC
   ctx.fillStyle = starColor ? darkenColor(starColor) : COLORS.SMOKY_DARK;
   ctx.fillRect(6, 13, 4, 5);
 
-  // Pants - walking reversed
+  // Pants
   ctx.fillStyle = '#3d5c94';
-  ctx.fillRect(w - 6, 19, 5, 5);
-  ctx.fillRect(2, 20, 5, 4);
+  ctx.fillRect(3, 19, w - 6, 5);
 
-  ctx.fillStyle = '#333';
-  ctx.fillRect(w - 5, h - 4, 6, 4);
-  ctx.fillRect(1, h - 3, 5, 3);
+  // Skateboard
+  drawSkateboardBig(ctx, w, h);
 }
 
-// Big jumping pose - guy with joint
+// Big jumping pose
 function drawBigJumping(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair
   ctx.fillStyle = '#4a3728';
@@ -676,12 +625,6 @@ function drawBigJumping(ctx: CanvasRenderingContext2D, w: number, h: number, sta
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 10, 4, 2);
 
-  // Joint going up
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w, 7, 5, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 4, 7, 1, 2);
-
   // Arms up - skin
   ctx.fillStyle = '#e8b88a';
   ctx.fillRect(0, 7, 3, 3);
@@ -700,12 +643,11 @@ function drawBigJumping(ctx: CanvasRenderingContext2D, w: number, h: number, sta
   ctx.fillRect(1, 19, 5, 5);
   ctx.fillRect(w - 6, 19, 5, 5);
 
-  ctx.fillStyle = '#333';
-  ctx.fillRect(0, h - 3, 5, 3);
-  ctx.fillRect(w - 5, h - 3, 5, 3);
+  // Skateboard
+  drawSkateboardBig(ctx, w, h);
 }
 
-// Big skidding pose - guy with joint
+// Big skidding pose
 function drawBigSkidding(ctx: CanvasRenderingContext2D, w: number, h: number, starColor: string | null = null): void {
   // Hair - messy
   ctx.fillStyle = '#4a3728';
@@ -729,12 +671,6 @@ function drawBigSkidding(ctx: CanvasRenderingContext2D, w: number, h: number, st
   ctx.fillStyle = '#000';
   ctx.fillRect(7, 11, 3, 1);
 
-  // Joint almost falling
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w, 10, 5, 2);
-  ctx.fillStyle = '#ff6600';
-  ctx.fillRect(w + 4, 10, 1, 2);
-
   // Green hoodie - leaning (or star color)
   ctx.fillStyle = starColor || COLORS.SMOKY_GREEN;
   ctx.fillRect(3, 13, w - 5, 6);
@@ -751,12 +687,11 @@ function drawBigSkidding(ctx: CanvasRenderingContext2D, w: number, h: number, st
   ctx.fillRect(4, 19, 5, 5);
   ctx.fillRect(w - 6, 19, 5, 5);
 
-  ctx.fillStyle = '#333';
-  ctx.fillRect(4, h - 4, 6, 4);
-  ctx.fillRect(w - 6, h - 4, 5, 4);
+  // Skateboard
+  drawSkateboardBig(ctx, w, h);
 }
 
-// Death pose - guy with joint falling
+// Death pose
 function drawSmokyDeath(ctx: CanvasRenderingContext2D, entity: Entity): void {
   ctx.save();
 
@@ -794,10 +729,6 @@ function drawSmokyDeath(ctx: CanvasRenderingContext2D, entity: Entity): void {
   // Open sad mouth
   ctx.fillStyle = '#000';
   ctx.fillRect(6, 7, 3, 2);
-
-  // Joint falling away
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(w + 1, 8, 3, 2);
 
   // Green hoodie
   ctx.fillStyle = COLORS.SMOKY_GREEN;

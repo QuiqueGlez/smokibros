@@ -38,6 +38,7 @@ export class AudioManager {
     this.createSound('death', this.generateDeath());
     this.createSound('flagpole', this.generateFlagpole());
     this.createSound('1up', this.generate1Up());
+    this.createSound('pipe', this.generatePipe());
   }
 
   private createSound(name: string, buffer: AudioBuffer): void {
@@ -123,6 +124,16 @@ export class AudioManager {
       tones.push({ freq: note, duration: 0.08 });
     }
     return this.createTone(tones, 'square', 0.3);
+  }
+
+  private generatePipe(): AudioBuffer {
+    return this.createTone([
+      { freq: 600, duration: 0.08 },
+      { freq: 500, duration: 0.08 },
+      { freq: 400, duration: 0.08 },
+      { freq: 300, duration: 0.08 },
+      { freq: 200, duration: 0.15 },
+    ], 'square', 0.3);
   }
 
   private generate1Up(): AudioBuffer {

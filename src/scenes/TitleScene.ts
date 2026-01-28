@@ -68,7 +68,7 @@ export class TitleScene extends Scene {
     if (this.showPressStart) {
       context.fillStyle = '#fff';
       context.font = '10px monospace';
-      context.fillText('PRESS SPACE TO START', SCREEN_WIDTH / 2, 200);
+      context.fillText('PRESS SPACE TO START', SCREEN_WIDTH / 2, 215);
     }
 
     // Copyright
@@ -107,17 +107,18 @@ export class TitleScene extends Scene {
     context.fillStyle = '#000';
     context.fillRect(7, 12, 6, 1);
 
-    // Joint
-    context.fillStyle = '#fff';
-    context.fillRect(17, 11, 8, 3);
-    context.fillStyle = '#ff6600';
-    context.fillRect(24, 11, 2, 3);
-
     // Green hoodie
     context.fillStyle = COLORS.SMOKY_GREEN;
     context.fillRect(2, 15, 16, 9);
     context.fillStyle = COLORS.SMOKY_DARK;
     context.fillRect(7, 15, 6, 7);
+
+    // Skateboard
+    context.fillStyle = '#c47632';
+    context.fillRect(-1, 24, 22, 2);
+    context.fillStyle = '#fff';
+    context.fillRect(2, 26, 5, 3);
+    context.fillRect(13, 26, 5, 3);
 
     context.restore();
   }

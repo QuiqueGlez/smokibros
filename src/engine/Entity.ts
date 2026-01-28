@@ -11,6 +11,10 @@ export class Entity {
 
   // State
   lifetime = 0;
+  visible = true;
+
+  // Optional clip: only draw the portion of the entity above this world Y
+  clipY: number | null = null;
 
   // Traits map for O(1) lookup
   private traits = new Map<string, Trait>();

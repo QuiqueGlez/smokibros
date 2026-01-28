@@ -1,10 +1,10 @@
 import { Entity } from '../../engine/Entity';
 import { Trait } from '../../engine/Trait';
 import type { Level } from '../../levels/Level';
-import { COLORS } from '../../types';
 import type { PowerUp } from '../../traits/PowerUp';
 import type { ChillMeter } from '../../traits/ChillMeter';
 import { audioManager } from '../../audio/AudioManager';
+import { productImages } from '../../graphics/ProductImages';
 
 // Collectible trait - picked up on player contact
 export class Collectible extends Trait {
@@ -61,14 +61,20 @@ export function createFilter(): Entity {
     const x = Math.floor(filter.pos.x);
     const y = Math.floor(filter.pos.y);
 
-    drawFilter(context, x, y, frame);
+    // Try product image
+    const img = productImages.get('filter');
+    if (img) {
+      drawFilterImage(context, img, x, y, frame);
+    } else {
+      drawFilter(context, x, y, frame);
+    }
   };
 
   return filter;
 }
 
 function drawFilter(ctx: CanvasRenderingContext2D, x: number, y: number, frame: number): void {
-  // Spinning coin effect - width changes
+  // Spinning librito de papel Smoking
   const widths = [10, 6, 2, 6];
   const width = widths[frame];
   const xOffset = Math.floor((10 - width) / 2);
@@ -76,21 +82,44 @@ function drawFilter(ctx: CanvasRenderingContext2D, x: number, y: number, frame: 
   ctx.save();
   ctx.translate(x + xOffset, y);
 
-  // Gold coin body
-  ctx.fillStyle = COLORS.GOLD;
+  // Paper pack body (brown/supreme style)
+  ctx.fillStyle = '#8B4513';
   ctx.fillRect(0, 0, width, 14);
 
-  // Shine effect
   if (width > 4) {
-    ctx.fillStyle = '#FFE55C';
-    ctx.fillRect(1, 1, Math.max(1, width - 4), 12);
+    // Lighter inner area (label)
+    ctx.fillStyle = '#CD853F';
+    ctx.fillRect(1, 2, width - 2, 8);
+
+    // "S" logo in red
+    ctx.fillStyle = '#C41E3A';
+    ctx.fillRect(2, 4, Math.max(1, width - 4), 3);
+
+    // White papers sticking out top
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(1, 0, width - 2, 2);
+  } else if (width > 2) {
+    ctx.fillStyle = '#CD853F';
+    ctx.fillRect(1, 2, width - 2, 8);
   }
 
   // Dark edge
-  ctx.fillStyle = '#B8860B';
+  ctx.fillStyle = '#5D2906';
   ctx.fillRect(width - 1, 0, 1, 14);
   ctx.fillRect(0, 13, width, 1);
 
+  ctx.restore();
+}
+
+// Draw filter using product image with spinning effect
+function drawFilterImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, frame: number): void {
+  const widths = [10, 6, 2, 6];
+  const width = widths[frame];
+  const xOffset = Math.floor((10 - width) / 2);
+
+  ctx.save();
+  ctx.translate(x + xOffset, y);
+  ctx.drawImage(img, 0, 0, width, 14);
   ctx.restore();
 }
 
@@ -114,7 +143,13 @@ export function createPopupCoin(): Entity {
 
     const x = Math.floor(coin.pos.x);
     const y = Math.floor(coin.pos.y);
-    drawFilter(context, x, y, frame);
+
+    const img = productImages.get('filter');
+    if (img) {
+      drawFilterImage(context, img, x, y, frame);
+    } else {
+      drawFilter(context, x, y, frame);
+    }
   };
 
   // Custom update for popup behavior
@@ -182,24 +217,32 @@ export function createGrinder(): Entity {
       context.clip();
     }
 
-    // Green mushroom body
-    context.fillStyle = COLORS.SMOKY_GREEN;
-    context.fillRect(x + 2, y + 6, 12, 10);
-
-    // Cap
-    context.fillStyle = '#2D5A27';
-    context.fillRect(x, y, 16, 8);
-    context.fillRect(x + 2, y - 2, 12, 4);
-
-    // Spots on cap
-    context.fillStyle = '#7EC87E';
-    context.fillRect(x + 3, y + 2, 4, 3);
-    context.fillRect(x + 9, y + 2, 4, 3);
-
-    // Eyes
-    context.fillStyle = '#000';
-    context.fillRect(x + 4, y + 9, 2, 2);
-    context.fillRect(x + 10, y + 9, 2, 2);
+    // Try product image
+    const img = productImages.get('grinder');
+    if (img) {
+      context.drawImage(img, x, y, 16, 16);
+    } else {
+      // Fallback: procedural draw
+      context.fillStyle = '#5a8a8a';
+      context.fillRect(x + 1, y + 6, 14, 10);
+      context.fillStyle = '#7ab0b0';
+      context.fillRect(x + 3, y + 7, 4, 8);
+      context.fillStyle = '#4a7070';
+      context.fillRect(x, y + 7, 1, 2);
+      context.fillRect(x, y + 10, 1, 2);
+      context.fillRect(x + 15, y + 7, 1, 2);
+      context.fillRect(x + 15, y + 10, 1, 2);
+      context.fillStyle = '#1a6a8a';
+      context.fillRect(x, y, 16, 7);
+      context.fillStyle = '#ff6b9d';
+      context.fillRect(x + 3, y + 1, 4, 3);
+      context.fillStyle = '#ffcc00';
+      context.fillRect(x + 8, y + 1, 5, 3);
+      context.fillStyle = '#00cc66';
+      context.fillRect(x + 5, y + 3, 6, 2);
+      context.fillStyle = '#4a7070';
+      context.fillRect(x, y + 5, 16, 2);
+    }
 
     context.restore();
   };

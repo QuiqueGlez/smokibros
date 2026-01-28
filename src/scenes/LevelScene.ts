@@ -15,6 +15,7 @@ import type { Stomper } from '../traits/Stomper';
 import type { ChillMeter } from '../traits/ChillMeter';
 import type { Go } from '../traits/Go';
 import type { Solid } from '../traits/Solid';
+import type { PipeWarp } from '../traits/PipeWarp';
 
 export class LevelScene extends Scene {
   private level: Level;
@@ -26,7 +27,6 @@ export class LevelScene extends Scene {
   private touchContainer: HTMLDivElement | null = null;
 
   // Smoke effect timers
-  private jointSmokeTimer = 0;
   private speedTrailTimer = 0;
   private wasInAir = false;
 
@@ -67,6 +67,34 @@ export class LevelScene extends Scene {
 
       // Setup touch controls for mobile
       this.setupTouchControls(controls);
+
+      // Setup pipe warp controls if trait exists
+      const pipeWarp = this.player.getTrait<PipeWarp>('pipewarp');
+      if (pipeWarp) {
+        this.keyboard.addMapping('ArrowDown', (pressed) => {
+          pipeWarp.downPressed = pressed;
+        });
+        this.keyboard.addMapping('KeyS', (pressed) => {
+          pipeWarp.downPressed = pressed;
+        });
+
+        // Disable Go and Solid during warp
+        pipeWarp.onWarpStart = () => {
+          const go = this.player?.getTrait<Go>('go');
+          const solid = this.player?.getTrait<Solid>('solid');
+          if (go) go.direction = 0;
+          if (solid) solid.enabled = false;
+        };
+
+        pipeWarp.onWarpEnd = () => {
+          const solid = this.player?.getTrait<Solid>('solid');
+          if (solid) solid.enabled = true;
+        };
+
+        pipeWarp.onCameraJump = (cameraX: number) => {
+          this.camera.lock(cameraX, 0);
+        };
+      }
 
       // Get chill meter for connecting to events
       const chillMeter = this.player.getTrait<ChillMeter>('chillmeter');
@@ -142,22 +170,35 @@ export class LevelScene extends Scene {
 
     // Update camera
     if (this.player) {
-      this.camera.follow(this.player);
+      // Don't follow camera during warp (camera is snapped by PipeWarp)
+      const pipeWarp = this.player.getTrait<PipeWarp>('pipewarp');
+      const isWarping = pipeWarp?.isWarping ?? false;
 
-      // Check if player fell off the level
-      if (this.player.pos.y > SCREEN_HEIGHT + 16) {
-        this.handlePlayerDeath();
+      if (!isWarping) {
+        this.camera.follow(this.player);
       }
 
-      // Check if player is dead (hit by enemy)
-      const killable = this.player.getTrait<Killable>('killable');
-      if (killable?.isDead) {
-        this.handlePlayerDeath();
-      }
+      // Skip death/completion checks during warp
+      if (!isWarping) {
+        // Check if player fell off the level
+        if (this.player.pos.y > SCREEN_HEIGHT + 16) {
+          this.handlePlayerDeath();
+        }
 
-      // Check for level completion (reached end of level)
-      if (this.player.pos.x > this.level.width - 32) {
-        this.handleLevelComplete();
+        // Check if player is dead (hit by enemy)
+        const killable = this.player.getTrait<Killable>('killable');
+        if (killable?.isDead) {
+          this.handlePlayerDeath();
+        }
+
+        // Check for level completion (reached end of level, but not in underground)
+        const completionX = this.level.completionX ?? (this.level.width - 32);
+        const inUnderground = this.level.undergroundRange &&
+          this.player.pos.x >= this.level.undergroundRange.startTile * 16 &&
+          this.player.pos.x < this.level.undergroundRange.endTile * 16;
+        if (this.player.pos.x > completionX && !inUnderground) {
+          this.handleLevelComplete();
+        }
       }
     }
   }
@@ -259,20 +300,7 @@ export class LevelScene extends Scene {
     if (killable?.isDying || killable?.isDead) return;
 
     const playerX = this.player.pos.x + this.player.size.x / 2;
-    const playerY = this.player.pos.y;
     const onGround = solid?.onGround ?? false;
-
-    // Joint smoke - spawn periodically when not moving fast
-    this.jointSmokeTimer += delta;
-    if (this.jointSmokeTimer >= 0.3) {
-      this.jointSmokeTimer = 0;
-      // Smoke comes from the joint (right side of face)
-      const jointOffsetX = go?.heading === Direction.LEFT ? -6 : 14;
-      particleSystem.spawnJointSmoke(
-        this.player.pos.x + jointOffsetX,
-        playerY + 6
-      );
-    }
 
     // Speed trail when running fast
     const speed = Math.abs(this.player.vel.x);

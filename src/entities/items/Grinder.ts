@@ -3,7 +3,7 @@ import { Physics } from '../../traits/Physics';
 import { Solid } from '../../traits/Solid';
 import { PendulumWalk } from '../../traits/PendulumWalk';
 import { Collectible } from './Filter';
-import { COLORS } from '../../types';
+import { productImages } from '../../graphics/ProductImages';
 
 // Grinder - Mushroom equivalent
 // Makes the player "Colocado" (high) = bigger
@@ -26,29 +26,39 @@ export function createGrinder(): Entity {
   grinder.addTrait(collectible);
 
   grinder.draw = (context: CanvasRenderingContext2D) => {
-    context.save();
-    context.translate(grinder.pos.x, grinder.pos.y);
+    const px = Math.floor(grinder.pos.x);
+    const py = Math.floor(grinder.pos.y);
 
-    // Grinder body - green herb grinder
-    context.fillStyle = COLORS.SMOKY_GREEN;
-    context.fillRect(0, 4, 16, 12);
+    const img = productImages.get('grinder');
+    if (img) {
+      context.drawImage(img, px, py, 16, 16);
+    } else {
+      // Fallback: procedural draw
+      context.save();
+      context.translate(px, py);
 
-    // Top cap
-    context.fillStyle = '#1a3a17';
-    context.fillRect(0, 0, 16, 6);
+      context.fillStyle = '#5a8a8a';
+      context.fillRect(1, 6, 14, 10);
+      context.fillStyle = '#7ab0b0';
+      context.fillRect(3, 7, 4, 8);
+      context.fillStyle = '#4a7070';
+      for (let i = 0; i < 3; i++) {
+        context.fillRect(0, 7 + i * 3, 1, 2);
+        context.fillRect(15, 7 + i * 3, 1, 2);
+      }
+      context.fillStyle = '#1a6a8a';
+      context.fillRect(0, 0, 16, 7);
+      context.fillStyle = '#ff6b9d';
+      context.fillRect(3, 1, 4, 3);
+      context.fillStyle = '#ffcc00';
+      context.fillRect(8, 1, 5, 3);
+      context.fillStyle = '#00cc66';
+      context.fillRect(5, 3, 6, 2);
+      context.fillStyle = '#4a7070';
+      context.fillRect(0, 5, 16, 2);
 
-    // Ridges on sides
-    context.fillStyle = '#1a3a17';
-    for (let i = 0; i < 3; i++) {
-      context.fillRect(0, 6 + i * 4, 2, 2);
-      context.fillRect(14, 6 + i * 4, 2, 2);
+      context.restore();
     }
-
-    // Shine
-    context.fillStyle = '#4a8a47';
-    context.fillRect(4, 2, 4, 2);
-
-    context.restore();
   };
 
   return grinder;

@@ -137,7 +137,7 @@ export function createPlaceholderSprites(): SpriteSheet {
   ctx.fillRect(32, 80, 16, 16);
   ctx.fillStyle = '#000';
   ctx.font = '12px monospace';
-  ctx.fillText('?', 36, 92);
+  ctx.fillText('S', 36, 92);
 
   // Empty block at (48, 80)
   ctx.fillStyle = '#654321';

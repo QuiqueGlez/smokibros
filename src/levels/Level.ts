@@ -19,6 +19,12 @@ export class Level {
   private blockContents = new Map<string, BlockContent>();
   private bouncingBlocks = new Map<string, number>();
 
+  // Underground zone (camera in this tile range = black background)
+  undergroundRange?: { startTile: number; endTile: number };
+
+  // Custom completion X position (pixel X to detect end of level)
+  completionX?: number;
+
   // Callbacks - include position for score popups
   onCoinCollected?: (x: number, y: number) => void;
   onBrickBroken?: (x: number, y: number) => void;
@@ -215,12 +221,21 @@ export class Level {
   }
 
   draw(context: CanvasRenderingContext2D, cameraX: number, _cameraY: number): void {
-    // Sky background
-    context.fillStyle = COLORS.SKY_BLUE;
-    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    // Check if camera is in underground zone
+    const isUnderground = this.isInUnderground(cameraX);
 
-    // Draw background decorations
-    this.drawBackground(context, cameraX);
+    if (isUnderground) {
+      // Underground: black background, no decorations
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    } else {
+      // Sky background
+      context.fillStyle = COLORS.SKY_BLUE;
+      context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+      // Draw background decorations
+      this.drawBackground(context, cameraX);
+    }
 
     // Draw tiles
     const startX = Math.floor(cameraX / TILE_SIZE);
@@ -245,11 +260,27 @@ export class Level {
 
     // Draw entities
     for (const entity of this.entities) {
+      if (!entity.visible) continue;
       context.save();
       context.translate(-cameraX, 0);
+      if (entity.clipY !== null) {
+        // Clip: only draw the portion of the entity above clipY (world Y coords)
+        // After translate(-cameraX, 0), we're in world-X / screen-Y space
+        // clipY is in world Y which equals screen Y (no vertical camera)
+        context.beginPath();
+        context.rect(0, 0, context.canvas.width + cameraX, entity.clipY);
+        context.clip();
+      }
       entity.draw(context);
       context.restore();
     }
+  }
+
+  private isInUnderground(cameraX: number): boolean {
+    if (!this.undergroundRange) return false;
+    const cameraTile = cameraX / TILE_SIZE;
+    return cameraTile >= this.undergroundRange.startTile &&
+           cameraTile < this.undergroundRange.endTile;
   }
 
   private drawBackground(ctx: CanvasRenderingContext2D, cameraX: number): void {
@@ -409,15 +440,18 @@ export class Level {
     ctx.fillRect(x + 1, y + 1, 14, 1);
     ctx.fillRect(x + 1, y + 1, 1, 14);
 
-    // Question mark
+    // "S" letter
     ctx.fillStyle = COLORS.QUESTION_DARK;
-    // Top of ?
+    // Top bar
     ctx.fillRect(x + 5, y + 3, 6, 2);
-    ctx.fillRect(x + 9, y + 5, 2, 2);
-    ctx.fillRect(x + 7, y + 7, 2, 2);
-    ctx.fillRect(x + 7, y + 9, 2, 2);
-    // Dot
-    ctx.fillRect(x + 7, y + 12, 2, 2);
+    // Upper left
+    ctx.fillRect(x + 5, y + 5, 2, 2);
+    // Middle bar
+    ctx.fillRect(x + 5, y + 7, 6, 2);
+    // Lower right
+    ctx.fillRect(x + 9, y + 9, 2, 2);
+    // Bottom bar
+    ctx.fillRect(x + 5, y + 11, 6, 2);
   }
 
   private drawUsedBlock(ctx: CanvasRenderingContext2D, x: number, y: number): void {

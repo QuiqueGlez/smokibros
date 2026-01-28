@@ -1,10 +1,11 @@
 import { Game } from './engine/Game';
 import { Level } from './levels/Level';
-import { createTestLevel } from './levels/LevelLoader';
+import { createTestLevel, createLevel2 } from './levels/LevelLoader';
 import { TitleScene } from './scenes/TitleScene';
 import { LevelScene } from './scenes/LevelScene';
 import { LevelIntroScene } from './scenes/LevelIntroScene';
 import { GameOverScene } from './scenes/GameOverScene';
+import { LevelCompleteScene } from './scenes/LevelCompleteScene';
 import { getSmokyControls } from './entities/Smoky';
 import { setupTouchControls } from './input/TouchControls';
 
@@ -44,9 +45,9 @@ class SmokingBros {
     this.game.setScene(introScene);
   }
 
-  private startLevelGameplay(_levelName: string): void {
-    // Create level
-    const level = createTestLevel();
+  private startLevelGameplay(levelName: string): void {
+    // Create level based on name
+    const level = levelName === '1-2' ? createLevel2() : createTestLevel();
 
     // Create level scene
     const levelScene = new LevelScene(this.game, level, {
@@ -91,10 +92,19 @@ class SmokingBros {
   }
 
   private handleLevelComplete(): void {
-    // For now, just show title screen
-    // In a full game, would progress to next level
     this.game.addScore(5000); // Level completion bonus
-    this.showTitleScreen();
+    const currentLevel = this.game.state.currentLevel;
+
+    const completeScene = new LevelCompleteScene(this.game, () => {
+      if (currentLevel === '1-1') {
+        // Progress to Level 1-2
+        this.startLevel('1-2');
+      } else {
+        // All levels complete, return to title
+        this.showTitleScreen();
+      }
+    });
+    this.game.setScene(completeScene);
   }
 }
 

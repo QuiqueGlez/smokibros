@@ -3,7 +3,6 @@ import { Physics } from '../../traits/Physics';
 import { Solid } from '../../traits/Solid';
 import { PendulumWalk } from '../../traits/PendulumWalk';
 import { Collectible } from './Filter';
-import { COLORS } from '../../types';
 
 // Cone - 1-Up Mushroom equivalent
 // Gives the player an extra life
@@ -29,44 +28,35 @@ export function createCone(): Entity {
     context.save();
     context.translate(cone.pos.x, cone.pos.y);
 
-    // Cone shape (ice cream cone / joint cone)
-    // Cone part (bottom triangle-ish)
-    context.fillStyle = '#D2691E'; // Chocolate brown
-    context.beginPath();
-    context.moveTo(8, 16);
-    context.lineTo(2, 6);
-    context.lineTo(14, 6);
-    context.closePath();
-    context.fill();
+    // Filter pack box (like Filtros Biodegradables)
+    // Box body (green/white diamond pattern style)
+    context.fillStyle = '#e8e8e0';
+    context.fillRect(1, 1, 14, 14);
 
-    // Waffle pattern
-    context.strokeStyle = '#8B4513';
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(5, 8);
-    context.lineTo(11, 8);
-    context.moveTo(6, 10);
-    context.lineTo(10, 10);
-    context.moveTo(7, 12);
-    context.lineTo(9, 12);
-    context.stroke();
+    // Green diamond pattern (like the product packaging)
+    context.fillStyle = '#00a800';
+    context.fillRect(2, 2, 12, 3);
+    context.fillRect(2, 11, 12, 3);
 
-    // Green top (the good stuff)
-    context.fillStyle = COLORS.SMOKY_GREEN;
-    context.beginPath();
-    context.arc(8, 5, 6, 0, Math.PI * 2);
-    context.fill();
-
-    // Highlight
-    context.fillStyle = '#4a8a47';
-    context.beginPath();
-    context.arc(6, 3, 2, 0, Math.PI * 2);
-    context.fill();
-
-    // "1UP" indicator
+    // Center label area
     context.fillStyle = '#fff';
-    context.font = '6px monospace';
-    context.fillText('1', 5, 6);
+    context.fillRect(2, 5, 12, 6);
+
+    // "Smoking" brand red stripe
+    context.fillStyle = '#C41E3A';
+    context.fillRect(3, 6, 10, 3);
+
+    // "1UP" text
+    context.fillStyle = '#fff';
+    context.font = '5px monospace';
+    context.fillText('1UP', 4, 9);
+
+    // Box border
+    context.fillStyle = '#008000';
+    context.fillRect(0, 0, 16, 1);
+    context.fillRect(0, 15, 16, 1);
+    context.fillRect(0, 0, 1, 16);
+    context.fillRect(15, 0, 1, 16);
 
     context.restore();
   };

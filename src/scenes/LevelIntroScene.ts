@@ -81,12 +81,6 @@ export class LevelIntroScene extends Scene {
     ctx.fillStyle = '#000';
     ctx.fillRect(x + 6, y + 8, 4, 1);
 
-    // Joint
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(x + 14, y + 6, 4, 2);
-    ctx.fillStyle = '#ff6600';
-    ctx.fillRect(x + 17, y + 6, 1, 2);
-
     // Green hoodie
     ctx.fillStyle = COLORS.SMOKY_GREEN;
     ctx.fillRect(x + 1, y + 11, 14, 5);

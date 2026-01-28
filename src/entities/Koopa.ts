@@ -118,8 +118,12 @@ export function createKoopa(): Entity {
     }
   };
 
-  // Wall collision - reverse shell direction
+  // Wall collision - reverse shell direction (also call trait handlers)
+  const originalOnTileCollide = koopa.onTileCollide.bind(koopa);
   koopa.onTileCollide = (side: 'top' | 'bottom' | 'left' | 'right') => {
+    // Call trait handlers (PendulumWalk reverses direction on wall hit)
+    originalOnTileCollide(side);
+
     if (state === KoopaState.SHELL_MOVING) {
       if (side === 'left' || side === 'right') {
         shellDirection = -shellDirection;
